@@ -32,11 +32,26 @@ class Keyboard {
     this.container.children[1].append(this.addKey());
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  detectCapsLock() {
+    document.querySelectorAll('.item').forEach((el) => {
+      if (el.textContent.length === 1) {
+        el.classList.toggle('lowercase');
+      }
+    });
+  }
+
   addKey() {
     sources.forEach((key) => {
       const item = document.createElement('div');
       item.classList.add('item');
       item.innerHTML = key;
+
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('capslock')) {
+          this.detectCapsLock();
+        }
+      });
 
       const tabsWithNewClass = [
         'Shift left',
@@ -85,8 +100,12 @@ class Keyboard {
       this.textarea.value += '\n';
     } else if (e.target.classList.contains('tab')) {
       this.textarea.value += '    ';
+    } else if (e.target.classList.contains('capslock')) {
+      this.textarea.value += '';
     } else {
-      this.textarea.value += e.target.textContent;
+      this.textarea.value += e.target.classList.contains('lowercase')
+        ? e.target.textContent.toLowerCase()
+        : e.target.textContent.toUpperCase();
     }
   }
 
@@ -107,7 +126,6 @@ class Keyboard {
 
     document.addEventListener('keydown', (e) => {
       e.preventDefault();
-      // console.log(e.key);
 
       if (e.key === 'Enter') {
         this.textarea.value += '\n';
@@ -123,7 +141,9 @@ class Keyboard {
         this.textarea.value += '    ';
         this.addActiveClass(document.querySelector('.tab'));
       } else {
-        this.textarea.value += e.key.toUpperCase();
+        this.textarea.value += document.querySelector('.lowercase')
+          ? e.key
+          : e.key.toUpperCase();
       }
 
       this.div.childNodes.forEach((div) => {
@@ -131,6 +151,15 @@ class Keyboard {
           this.addActiveClass(div);
         }
       });
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.which === 20) {
+        this.textarea.value += '';
+        this.addActiveClass(document.querySelector('.capslock'));
+
+        this.detectCapsLock();
+      }
     });
   }
 
