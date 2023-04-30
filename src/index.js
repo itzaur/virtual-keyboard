@@ -16,6 +16,7 @@ class Keyboard {
   init() {
     this.addListeners();
     this.createItems();
+    this.pressKeysEvents();
   }
 
   createItems() {
@@ -32,79 +33,9 @@ class Keyboard {
   }
 
   addKey() {
-    // const keyItems = [
-    //   '`',
-    //   '1',
-    //   '2',
-    //   '3',
-    //   '4',
-    //   '5',
-    //   '6',
-    //   '7',
-    //   '8',
-    //   '9',
-    //   '0',
-    //   '-',
-    //   '=',
-    //   'BackSpace',
-    //   'Tab',
-    //   'Q',
-    //   'W',
-    //   'E',
-    //   'R',
-    //   'T',
-    //   'Y',
-    //   'U',
-    //   'I',
-    //   'O',
-    //   'P',
-    //   '[',
-    //   ']',
-    //   'Del',
-    //   'Caps Lock',
-    //   'A',
-    //   'S',
-    //   'D',
-    //   'F',
-    //   'G',
-    //   'H',
-    //   'J',
-    //   'K',
-    //   'L',
-    //   ';',
-    //   '"',
-    //   'Enter',
-    //   'Shift left',
-    //   'Z',
-    //   'X',
-    //   'C',
-    //   'V',
-    //   'B',
-    //   'N',
-    //   'M',
-    //   ',',
-    //   '.',
-    //   '/',
-    //   'Shift right',
-    //   '&#8593',
-    //   'Ctrl',
-    //   'Win',
-    //   'Alt',
-    //   'Space',
-    //   'Alt',
-    //   'Ctrl',
-    //   '&#8592',
-    //   '&#x2193',
-    //   '&#8594',
-    // ];
-
-    // const fragment = document.createDocumentFragment();
-
     sources.forEach((key) => {
       const item = document.createElement('div');
       item.classList.add('item');
-
-      console.log(key);
       item.innerHTML = key;
 
       const tabsWithNewClass = [
@@ -119,7 +50,7 @@ class Keyboard {
         'Ctrl',
       ];
 
-      tabsWithNewClass.map((el) => {
+      tabsWithNewClass.filter((el) => {
         if (item.innerText === el) {
           item.classList.add(`${el.toLowerCase().split` `.join``}`);
         }
@@ -141,12 +72,75 @@ class Keyboard {
     return this.fragment;
   }
 
+  addText(e) {
+    if (e.target.classList.contains('space')) {
+      this.textarea.value += ' ';
+    } else if (e.target.classList.contains('backspace')) {
+      this.textarea.value = this.textarea.value.slice(
+        0,
+        // eslint-disable-next-line comma-dangle
+        this.textarea.value.length - 1
+      );
+    } else if (e.target.classList.contains('enter')) {
+      this.textarea.value += '\n';
+    } else if (e.target.classList.contains('tab')) {
+      this.textarea.value += '    ';
+    } else {
+      this.textarea.value += e.target.textContent;
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  addActiveClass(element) {
+    element.classList.add('active');
+    setTimeout(() => {
+      element.classList.remove('active');
+    }, 300);
+  }
+
+  pressKeysEvents() {
+    document.querySelectorAll('.item').forEach((item) => {
+      item.addEventListener('click', (e) => {
+        this.addText(e);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      e.preventDefault();
+      // console.log(e.key);
+
+      if (e.key === 'Enter') {
+        this.textarea.value += '\n';
+        this.addActiveClass(document.querySelector('.enter'));
+      } else if (e.key === 'Backspace') {
+        this.textarea.value = this.textarea.value.slice(
+          0,
+          // eslint-disable-next-line comma-dangle
+          this.textarea.value.length - 1
+        );
+        this.addActiveClass(document.querySelector('.backspace'));
+      } else if (e.key === 'Tab') {
+        this.textarea.value += '    ';
+        this.addActiveClass(document.querySelector('.tab'));
+      } else {
+        this.textarea.value += e.key.toUpperCase();
+      }
+
+      this.div.childNodes.forEach((div) => {
+        if (div.textContent === e.key.toUpperCase()) {
+          this.addActiveClass(div);
+        }
+      });
+    });
+  }
+
   // eslint-disable-next-line class-methods-use-this
   addListeners() {
-    document.addEventListener('keydown', (e) => {
-      console.log(e.key);
-      console.log(e);
-    });
+    // document.addEventListener('keydown', (e) => {
+    //   console.log(e.key);
+    //   console.log(e);
+    //   this.textarea.textContent += e.key;
+    // });
   }
 }
 

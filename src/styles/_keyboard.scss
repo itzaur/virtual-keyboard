@@ -39,6 +39,8 @@ body {
     border: 0;
     border-radius: 1em;
 
+    color: var(--color-text);
+
     background-color: var(--color-bg);
     box-shadow: var(--box-shadow-inner);
 
@@ -103,6 +105,10 @@ body {
     scale: 0.96;
     color: var(--color-text);
     box-shadow: var(--box-shadow-inner);
+  }
+
+  &.active {
+    animation: pressKey 0.3s ease-in-out forwards;
   }
 
   &.tab {
@@ -204,5 +210,23 @@ body {
     &:last-child {
       grid-column: span 1;
     }
+  }
+}
+
+@keyframes pressKey {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 0.96;
+    color: var(--color-text);
+    box-shadow: var(--box-shadow-inner);
+  }
+
+  100% {
+    scale: 1;
+    // color: var(--color-gray);
+    // box-shadow: var(--box-shadow-inner);
   }
 }
