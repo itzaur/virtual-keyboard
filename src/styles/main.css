@@ -93,8 +93,10 @@ body {
   color: var(--color-text);
   box-shadow: var(--box-shadow-inner);
 }
-.item.active {
-  animation: pressKey 0.3s ease-in-out forwards;
+.item.active, .item.capslock--active {
+  scale: 0.96;
+  color: var(--color-text);
+  box-shadow: var(--box-shadow-inner);
 }
 .item.tab {
   grid-row: 2;

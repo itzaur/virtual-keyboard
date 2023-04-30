@@ -111,8 +111,12 @@ body {
     box-shadow: var(--box-shadow-inner);
   }
 
-  &.active {
-    animation: pressKey 0.3s ease-in-out forwards;
+  &.active,
+  &.capslock--active {
+    // animation: pressKey 0.3s ease-in-out forwards;
+    scale: 0.96;
+    color: var(--color-text);
+    box-shadow: var(--box-shadow-inner);
   }
 
   &.tab {

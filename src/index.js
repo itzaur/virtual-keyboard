@@ -11,6 +11,8 @@ class Keyboard {
     this.container = document.querySelector(container);
 
     this.fragment = document.createDocumentFragment();
+
+    this.isActive = false;
   }
 
   init() {
@@ -62,7 +64,11 @@ class Keyboard {
         'Space',
         'Tab',
         'Del',
-        'Ctrl',
+        'Ctrl left',
+        'Ctrl right',
+        'Alt left',
+        'Alt right',
+        'Win',
       ];
 
       tabsWithNewClass.filter((el) => {
@@ -76,6 +82,22 @@ class Keyboard {
           item.classList.contains('shiftright')
         ) {
           item.textContent = 'Shift';
+        }
+
+        if (
+          // eslint-disable-next-line operator-linebreak
+          item.classList.contains('altleft') ||
+          item.classList.contains('altright')
+        ) {
+          item.textContent = 'Alt';
+        }
+
+        if (
+          // eslint-disable-next-line operator-linebreak
+          item.classList.contains('ctrlleft') ||
+          item.classList.contains('ctrlright')
+        ) {
+          item.textContent = 'Ctrl';
         }
 
         return item;
@@ -101,6 +123,20 @@ class Keyboard {
     } else if (e.target.classList.contains('tab')) {
       this.textarea.value += '    ';
     } else if (e.target.classList.contains('capslock')) {
+      e.target.classList.toggle('capslock--active');
+    } else if (
+      // eslint-disable-next-line operator-linebreak
+      e.target.classList.contains('win') ||
+      // eslint-disable-next-line operator-linebreak
+      e.target.classList.contains('alt') ||
+      e.target.classList.contains('ctrl')
+    ) {
+      this.textarea.value += '';
+    } else if (
+      // eslint-disable-next-line operator-linebreak
+      e.target.classList.contains('shiftleft') ||
+      e.target.classList.contains('shiftright')
+    ) {
       this.textarea.value += '';
     } else {
       this.textarea.value += e.target.classList.contains('lowercase')
@@ -112,12 +148,19 @@ class Keyboard {
   // eslint-disable-next-line class-methods-use-this
   addActiveClass(element) {
     element.classList.add('active');
-    setTimeout(() => {
-      element.classList.remove('active');
-    }, 300);
+    // setTimeout(() => {
+    //   element.classList.remove('active');
+    // }, 300);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  removeActiveClass(element) {
+    element.classList.remove('active');
   }
 
   pressKeysEvents() {
+    document.querySelector('.capslock').classList.add('capslock--active');
+
     document.querySelectorAll('.item').forEach((item) => {
       item.addEventListener('click', (e) => {
         this.addText(e);
@@ -126,6 +169,8 @@ class Keyboard {
 
     document.addEventListener('keydown', (e) => {
       e.preventDefault();
+
+      console.log(e.key);
 
       if (e.key === 'Enter') {
         this.textarea.value += '\n';
@@ -140,9 +185,31 @@ class Keyboard {
       } else if (e.key === 'Tab') {
         this.textarea.value += '    ';
         this.addActiveClass(document.querySelector('.tab'));
+      } else if (e.code === 'Space') {
+        this.textarea.value += ' ';
+        this.addActiveClass(document.querySelector('.space'));
+      } else if (e.code === 'ShiftLeft') {
+        this.textarea.value += '';
+        this.addActiveClass(document.querySelector('.shiftleft'));
+      } else if (e.shiftKey && !document.querySelector('.lowercase')) {
+        this.textarea.value += e.key.toLowerCase();
+      } else if (e.shiftKey && document.querySelector('.lowercase')) {
+        this.textarea.value += e.key.toUpperCase();
+      } else if (e.code === 'ShiftRight') {
+        this.addActiveClass(document.querySelector('.shiftright'));
+      } else if (e.code === 'MetaLeft') {
+        this.addActiveClass(document.querySelector('.win'));
+      } else if (e.code === 'AltLeft') {
+        this.addActiveClass(document.querySelector('.altleft'));
+      } else if (e.code === 'AltRight') {
+        this.addActiveClass(document.querySelector('.altright'));
+      } else if (e.code === 'ControlLeft') {
+        this.addActiveClass(document.querySelector('.ctrlleft'));
+      } else if (e.code === 'ControlRight') {
+        this.addActiveClass(document.querySelector('.ctrlright'));
       } else {
         this.textarea.value += document.querySelector('.lowercase')
-          ? e.key
+          ? e.key.toLowerCase()
           : e.key.toUpperCase();
       }
 
@@ -154,11 +221,24 @@ class Keyboard {
     });
 
     document.addEventListener('keyup', (e) => {
+      document.querySelectorAll('.item').forEach((item) => {
+        this.removeActiveClass(item);
+      });
+
       if (e.which === 20) {
+        this.isActive = !this.isActive;
+
         this.textarea.value += '';
-        this.addActiveClass(document.querySelector('.capslock'));
 
         this.detectCapsLock();
+
+        if (!this.isActive) {
+          document.querySelector('.capslock').classList.add('capslock--active');
+        } else {
+          document
+            .querySelector('.capslock')
+            .classList.remove('capslock--active');
+        }
       }
     });
   }
