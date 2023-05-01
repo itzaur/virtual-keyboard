@@ -426,6 +426,21 @@ class Keyboard {
           this.addActiveClass(div);
         }
       });
+
+      // Add animation when shift + item (key) pressed
+      if (e.shiftKey && e.key) {
+        const itemsArray = [...e.target.children.keyboard.children[1].children];
+        const pressedElement = e.code.split``.at(-1);
+
+        // eslint-disable-next-line max-len, no-confusing-arrow
+        itemsArray.map(
+          // eslint-disable-next-line no-confusing-arrow
+          (el) =>
+            // eslint-disable-next-line implicit-arrow-linebreak, comma-dangle
+            el.textContent === pressedElement ? this.addActiveClass(el) : false
+          // eslint-disable-next-line function-paren-newline
+        );
+      }
     });
 
     // Capslock button functionality
