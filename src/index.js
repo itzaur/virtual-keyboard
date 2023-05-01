@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 // eslint-disable-next-line import/extensions
 import sources from './sources.js';
 
@@ -13,10 +14,12 @@ class Keyboard {
     this.fragment = document.createDocumentFragment();
 
     this.isActive = false;
+    this.start = null;
+    this.end = null;
+    this.value = null;
   }
 
   init() {
-    this.addListeners();
     this.createItems();
     this.pressKeysEvents();
   }
@@ -32,6 +35,19 @@ class Keyboard {
     this.container.append(this.textarea, this.div);
 
     this.container.children[1].append(this.addKey());
+
+    [...document.querySelectorAll('.item')]
+      .filter((el) => el.innerText === '→')[0]
+      .classList.add('arrow-right');
+    [...document.querySelectorAll('.item')]
+      .filter((el) => el.innerText === '↓')[0]
+      .classList.add('arrow-down');
+    [...document.querySelectorAll('.item')]
+      .filter((el) => el.innerText === '←')[0]
+      .classList.add('arrow-left');
+    [...document.querySelectorAll('.item')]
+      .filter((el) => el.innerText === '↑')[0]
+      .classList.add('arrow-up');
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -110,52 +126,153 @@ class Keyboard {
   }
 
   addText(e) {
+    this.start = this.textarea.selectionStart;
+    this.end = this.textarea.selectionEnd;
+    this.value = this.textarea.value;
+
     if (e.target.classList.contains('space')) {
-      this.textarea.value += ' ';
+      this.spaceButtonFunctionality();
     } else if (e.target.classList.contains('backspace')) {
-      this.textarea.value = this.textarea.value.slice(
-        0,
-        // eslint-disable-next-line comma-dangle
-        this.textarea.value.length - 1
-      );
+      this.backspaceButtonFunctionality();
     } else if (e.target.classList.contains('enter')) {
-      this.textarea.value += '\n';
+      this.enterButtonFunctionality();
     } else if (e.target.classList.contains('tab')) {
-      this.textarea.value += '    ';
+      this.tabButtonFunctionality();
     } else if (e.target.classList.contains('capslock')) {
       e.target.classList.toggle('capslock--active');
     } else if (
       // eslint-disable-next-line operator-linebreak
       e.target.classList.contains('win') ||
-      // eslint-disable-next-line operator-linebreak
-      e.target.classList.contains('alt') ||
-      e.target.classList.contains('ctrl')
-    ) {
-      this.textarea.value += '';
-    } else if (
-      // eslint-disable-next-line operator-linebreak
       e.target.classList.contains('shiftleft') ||
-      e.target.classList.contains('shiftright')
+      e.target.classList.contains('shiftright') ||
+      e.target.classList.contains('altleft') ||
+      e.target.classList.contains('altright') ||
+      e.target.classList.contains('ctrlleft') ||
+      e.target.classList.contains('ctrlright')
     ) {
       this.textarea.value += '';
+    } else if (e.target.classList.contains('del')) {
+      this.deleteButtonFunctionality();
     } else {
-      this.textarea.value += e.target.classList.contains('lowercase')
-        ? e.target.textContent.toLowerCase()
-        : e.target.textContent.toUpperCase();
+      this.changeCursorPositionOnClick(e);
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
   addActiveClass(element) {
     element.classList.add('active');
-    // setTimeout(() => {
-    //   element.classList.remove('active');
-    // }, 300);
   }
 
   // eslint-disable-next-line class-methods-use-this
   removeActiveClass(element) {
     element.classList.remove('active');
+  }
+
+  backspaceButtonFunctionality() {
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      this.value.slice(
+        0,
+        // eslint-disable-next-line comma-dangle
+        this.start === this.end ? this.start - 1 : this.start
+      ) + this.value.slice(this.end + 1);
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart =
+      this.start === this.end ? this.start - 1 : this.start;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  deleteButtonFunctionality() {
+    if (!(this.value.length > this.end)) return;
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      this.value.slice(0, this.start) + this.value.slice(this.end + 1);
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  enterButtonFunctionality() {
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      this.value.slice(0, this.start).concat('\n') + this.value.slice(this.end);
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start + 1;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  tabButtonFunctionality() {
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      this.value.slice(0, this.start).concat('\t') + this.value.slice(this.end);
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start + 1;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  spaceButtonFunctionality() {
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      this.value.slice(0, this.start).concat(' ') + this.value.slice(this.end);
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start + 1;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  changeCursorPositionOnClick(e) {
+    // eslint-disable-next-line operator-linebreak
+    const newValue =
+      // eslint-disable-next-line operator-linebreak
+      this.value.slice(0, this.start) +
+      (e.target.classList.contains('lowercase')
+        ? e.target.textContent.toLowerCase()
+        : // eslint-disable-next-line operator-linebreak, indent
+          // eslint-disable-next-line operator-linebreak, indent
+          // eslint-disable-next-line operator-linebreak, indent
+          // eslint-disable-next-line operator-linebreak, indent
+          e.target.textContent.toUpperCase()) +
+      this.value.slice(this.end);
+
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start + 1;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  changeCursorPositionOnKeydown(e) {
+    let newValue;
+
+    if (e.shiftKey && !document.querySelector('.lowercase')) {
+      newValue =
+        this.value.slice(0, this.start) +
+        e.key.toLowerCase() +
+        this.value.slice(this.end);
+    } else if (e.shiftKey && document.querySelector('.lowercase')) {
+      newValue =
+        this.value.slice(0, this.start) +
+        e.key.toUpperCase() +
+        this.value.slice(this.end);
+    } else if (document.querySelector('.lowercase')) {
+      newValue =
+        this.value.slice(0, this.start) +
+        e.key.toLowerCase() +
+        this.value.slice(this.end);
+    } else {
+      newValue =
+        this.value.slice(0, this.start) +
+        e.key.toUpperCase() +
+        this.value.slice(this.end);
+    }
+
+    this.textarea.value = newValue;
+
+    this.textarea.selectionStart = this.start + 1;
+    this.textarea.selectionEnd = this.textarea.selectionStart;
   }
 
   pressKeysEvents() {
@@ -170,31 +287,26 @@ class Keyboard {
     document.addEventListener('keydown', (e) => {
       e.preventDefault();
 
-      console.log(e.key);
+      this.start = this.textarea.selectionStart;
+      this.end = this.textarea.selectionEnd;
+      this.value = this.textarea.value;
+
+      // console.log(e.key);
 
       if (e.key === 'Enter') {
-        this.textarea.value += '\n';
+        this.enterButtonFunctionality();
         this.addActiveClass(document.querySelector('.enter'));
       } else if (e.key === 'Backspace') {
-        this.textarea.value = this.textarea.value.slice(
-          0,
-          // eslint-disable-next-line comma-dangle
-          this.textarea.value.length - 1
-        );
+        this.backspaceButtonFunctionality();
         this.addActiveClass(document.querySelector('.backspace'));
       } else if (e.key === 'Tab') {
-        this.textarea.value += '    ';
+        this.tabButtonFunctionality();
         this.addActiveClass(document.querySelector('.tab'));
       } else if (e.code === 'Space') {
-        this.textarea.value += ' ';
+        this.spaceButtonFunctionality(e);
         this.addActiveClass(document.querySelector('.space'));
       } else if (e.code === 'ShiftLeft') {
-        this.textarea.value += '';
         this.addActiveClass(document.querySelector('.shiftleft'));
-      } else if (e.shiftKey && !document.querySelector('.lowercase')) {
-        this.textarea.value += e.key.toLowerCase();
-      } else if (e.shiftKey && document.querySelector('.lowercase')) {
-        this.textarea.value += e.key.toUpperCase();
       } else if (e.code === 'ShiftRight') {
         this.addActiveClass(document.querySelector('.shiftright'));
       } else if (e.code === 'MetaLeft') {
@@ -207,10 +319,26 @@ class Keyboard {
         this.addActiveClass(document.querySelector('.ctrlleft'));
       } else if (e.code === 'ControlRight') {
         this.addActiveClass(document.querySelector('.ctrlright'));
+      } else if (e.code === 'Delete') {
+        this.addActiveClass(document.querySelector('.del'));
+        this.deleteButtonFunctionality();
+      } else if (e.key === 'ArrowUp') {
+        this.addActiveClass(document.querySelector('.arrow-up'));
+        this.textarea.value += document.querySelector('.arrow-up').textContent;
+      } else if (e.key === 'ArrowDown') {
+        this.addActiveClass(document.querySelector('.arrow-down'));
+        this.textarea.value +=
+          document.querySelector('.arrow-down').textContent;
+      } else if (e.key === 'ArrowLeft') {
+        this.addActiveClass(document.querySelector('.arrow-left'));
+        this.textarea.value +=
+          document.querySelector('.arrow-left').textContent;
+      } else if (e.key === 'ArrowRight') {
+        this.addActiveClass(document.querySelector('.arrow-right'));
+        this.textarea.value +=
+          document.querySelector('.arrow-right').textContent;
       } else {
-        this.textarea.value += document.querySelector('.lowercase')
-          ? e.key.toLowerCase()
-          : e.key.toUpperCase();
+        this.changeCursorPositionOnKeydown(e);
       }
 
       this.div.childNodes.forEach((div) => {
@@ -241,15 +369,6 @@ class Keyboard {
         }
       }
     });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  addListeners() {
-    // document.addEventListener('keydown', (e) => {
-    //   console.log(e.key);
-    //   console.log(e);
-    //   this.textarea.textContent += e.key;
-    // });
   }
 }
 

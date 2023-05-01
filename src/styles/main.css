@@ -126,7 +126,7 @@ body {
   grid-column: span 3;
 }
 .item.space {
-  grid-column: span 11;
+  grid-column: span 13;
 }
 .item:last-child {
   grid-column: span 3;
