@@ -1,27 +1,36 @@
 /* eslint-disable operator-linebreak */
 // eslint-disable-next-line import/extensions
-import sources from './sources.js';
+import sources from './sources-en.js';
+// eslint-disable-next-line import/extensions
+import sourcesRu from './sources-ru.js';
 
 const main = document.createElement('main');
 main.setAttribute('id', 'keyboard');
 main.classList.add('keyboard');
 document.body.prepend(main);
+
 class Keyboard {
   constructor(container) {
-    this.keys = [];
     this.container = document.querySelector(container);
 
     this.fragment = document.createDocumentFragment();
 
+    // Parameters
     this.isActive = false;
+
+    // Textarea selection parameters
     this.start = null;
     this.end = null;
     this.value = null;
+
+    // Change language parameters
+    this.language = localStorage.getItem('lang');
   }
 
   init() {
     this.createItems();
     this.pressKeysEvents();
+    this.changeLanguage();
   }
 
   createItems() {
@@ -35,6 +44,12 @@ class Keyboard {
     this.container.append(this.textarea, this.div);
 
     this.container.children[1].append(this.addKey());
+
+    const title = `
+      <p class="keyboard__title">Клавиатура создана в операционной системе Windows. <br> Комбинация для переключения языка: левыe shift + alt</p>
+      `;
+
+    this.container.insertAdjacentHTML('beforeend', title);
 
     [...document.querySelectorAll('.item')]
       .filter((el) => el.innerText === '→')[0]
@@ -71,58 +86,66 @@ class Keyboard {
         }
       });
 
-      const tabsWithNewClass = [
-        'Shift left',
-        'Shift right',
-        'BackSpace',
-        'Caps Lock',
-        'Enter',
-        'Space',
-        'Tab',
-        'Del',
-        'Ctrl left',
-        'Ctrl right',
-        'Alt left',
-        'Alt right',
-        'Win',
-      ];
-
-      tabsWithNewClass.filter((el) => {
-        if (item.innerText === el) {
-          item.classList.add(`${el.toLowerCase().split` `.join``}`);
-        }
-
-        if (
-          // eslint-disable-next-line operator-linebreak
-          item.classList.contains('shiftleft') ||
-          item.classList.contains('shiftright')
-        ) {
-          item.textContent = 'Shift';
-        }
-
-        if (
-          // eslint-disable-next-line operator-linebreak
-          item.classList.contains('altleft') ||
-          item.classList.contains('altright')
-        ) {
-          item.textContent = 'Alt';
-        }
-
-        if (
-          // eslint-disable-next-line operator-linebreak
-          item.classList.contains('ctrlleft') ||
-          item.classList.contains('ctrlright')
-        ) {
-          item.textContent = 'Ctrl';
-        }
-
-        return item;
-      });
+      this.addButtonsClasses(item);
 
       this.fragment.appendChild(item);
     });
 
     return this.fragment;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  addButtonsClasses(element) {
+    const tabsWithNewClass = [
+      'Shift left',
+      'Shift right',
+      'BackSpace',
+      'Caps Lock',
+      'Enter',
+      'Space',
+      'Tab',
+      'Del',
+      'Ctrl left',
+      'Ctrl right',
+      'Alt left',
+      'Alt right',
+      'Win',
+    ];
+
+    tabsWithNewClass.filter((el) => {
+      if (element.innerText === el) {
+        element.classList.add(`${el.toLowerCase().split` `.join``}`);
+      }
+
+      if (
+        // eslint-disable-next-line operator-linebreak
+        element.classList.contains('shiftleft') ||
+        element.classList.contains('shiftright')
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        element.textContent = 'Shift';
+      }
+
+      if (
+        // eslint-disable-next-line operator-linebreak
+        element.classList.contains('altleft') ||
+        element.classList.contains('altright')
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        element.textContent = 'Alt';
+      }
+
+      if (
+        // eslint-disable-next-line operator-linebreak
+        element.classList.contains('ctrlleft') ||
+        element.classList.contains('ctrlright')
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        element.textContent = 'Ctrl';
+      }
+
+      return element;
+    });
   }
 
   addText(e) {
@@ -176,6 +199,7 @@ class Keyboard {
         // eslint-disable-next-line comma-dangle
         this.start === this.end ? this.start - 1 : this.start
       ) + this.value.slice(this.end + 1);
+
     this.textarea.value = newValue;
 
     this.textarea.selectionStart =
@@ -188,6 +212,7 @@ class Keyboard {
     // eslint-disable-next-line operator-linebreak
     const newValue =
       this.value.slice(0, this.start) + this.value.slice(this.end + 1);
+
     this.textarea.value = newValue;
 
     this.textarea.selectionStart = this.start;
@@ -198,6 +223,7 @@ class Keyboard {
     // eslint-disable-next-line operator-linebreak
     const newValue =
       this.value.slice(0, this.start).concat('\n') + this.value.slice(this.end);
+
     this.textarea.value = newValue;
 
     this.textarea.selectionStart = this.start + 1;
@@ -208,6 +234,7 @@ class Keyboard {
     // eslint-disable-next-line operator-linebreak
     const newValue =
       this.value.slice(0, this.start).concat('\t') + this.value.slice(this.end);
+
     this.textarea.value = newValue;
 
     this.textarea.selectionStart = this.start + 1;
@@ -218,10 +245,65 @@ class Keyboard {
     // eslint-disable-next-line operator-linebreak
     const newValue =
       this.value.slice(0, this.start).concat(' ') + this.value.slice(this.end);
+
     this.textarea.value = newValue;
 
     this.textarea.selectionStart = this.start + 1;
     this.textarea.selectionEnd = this.textarea.selectionStart;
+  }
+
+  enableRuLanguage() {
+    document.body.classList.add('change-language');
+
+    document.documentElement.setAttribute('lang', 'ru');
+
+    this.sources = sourcesRu;
+
+    document.querySelectorAll('.item').forEach((item, i) => {
+      // eslint-disable-next-line no-param-reassign
+      item.innerHTML = this.sources[i];
+
+      this.addButtonsClasses(item);
+    });
+
+    localStorage.setItem('lang', 'enabled');
+  }
+
+  disableRuLanguage() {
+    document.body.classList.remove('change-language');
+
+    document.documentElement.setAttribute('lang', 'en');
+
+    this.sources = sources;
+
+    document.querySelectorAll('.item').forEach((item, i) => {
+      // eslint-disable-next-line no-param-reassign
+      item.innerHTML = this.sources[i];
+
+      this.addButtonsClasses(item);
+    });
+
+    localStorage.setItem('lang', null);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  changeLanguage() {
+    if (this.language === 'enabled') {
+      this.enableRuLanguage();
+    }
+
+    // Click shift + alt event to change language
+    document.addEventListener('keydown', (e) => {
+      if (e.shiftKey && e.key === 'Alt') {
+        this.language = localStorage.getItem('lang');
+
+        if (this.language !== 'enabled') {
+          this.enableRuLanguage();
+        } else {
+          this.disableRuLanguage();
+        }
+      }
+    });
   }
 
   changeCursorPositionOnClick(e) {
@@ -291,8 +373,6 @@ class Keyboard {
       this.end = this.textarea.selectionEnd;
       this.value = this.textarea.value;
 
-      // console.log(e.key);
-
       if (e.key === 'Enter') {
         this.enterButtonFunctionality();
         this.addActiveClass(document.querySelector('.enter'));
@@ -348,6 +428,7 @@ class Keyboard {
       });
     });
 
+    // Capslock button functionality
     document.addEventListener('keyup', (e) => {
       document.querySelectorAll('.item').forEach((item) => {
         this.removeActiveClass(item);
