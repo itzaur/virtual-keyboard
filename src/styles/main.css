@@ -1,0 +1,378 @@
+@charset "UTF-8";
+:root {
+  --color-bg: hsl(216, 21%, 91%);
+  --color-text: hsl(204, 80%, 50%);
+  --color-key: hsl(0, 0%, 50%);
+  --color-placeholder: #969eaa8a;
+  --box-shadow-inner: inset -3px -3px 7px #ffffff73,
+    inset 2px 2px 5px rgba(94, 104, 121, 0.2);
+  --box-shadow-outline: -3px -3px 7px #ffffff73,
+    2px 2px 5px rgba(94, 104, 121, 0.2);
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  display: grid;
+  place-content: center;
+  background-color: var(--color-bg);
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3rem;
+}
+.keyboard__textarea {
+  width: 60%;
+  height: 12rem;
+  max-height: 22rem;
+  font-size: 1.5rem;
+  margin-inline: auto;
+  padding: 1rem;
+  border: 0;
+  border-radius: 1em;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  box-shadow: var(--box-shadow-inner);
+  outline: none;
+}
+.keyboard__textarea:focus-visible {
+  outline: 1px solid rgb(198, 189, 207);
+}
+.keyboard__textarea:focus-visible::-moz-placeholder {
+  opacity: 0;
+}
+.keyboard__textarea:focus-visible::placeholder {
+  opacity: 0;
+}
+.keyboard__textarea::-moz-placeholder {
+  color: var(--color-placeholder);
+  -moz-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+.keyboard__textarea::placeholder {
+  color: var(--color-placeholder);
+  transition: opacity 0.3s;
+}
+.keyboard__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
+  grid-template-rows: repeat(6, 5rem);
+  grid-gap: 1rem;
+  justify-content: center;
+  width: 95vw;
+  max-width: 95rem;
+  margin-inline: auto;
+  padding: 3rem;
+  background-color: var(--color-bg);
+  box-shadow: var(--box-shadow-outline);
+}
+.keyboard__title {
+  position: relative;
+  width: -moz-fit-content;
+  width: fit-content;
+  align-self: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
+  text-align: center;
+  border-radius: 5px;
+  color: var(--color-key);
+}
+
+.item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: span 2;
+  padding: 1em;
+  font-size: 2rem;
+  border-radius: 5px;
+  color: var(--color-key);
+  background-color: var(--color-bg);
+  box-shadow: var(--box-shadow-outline);
+  cursor: pointer;
+  transition: background-color 0.6s ease-out, color 0.4s ease-out, scale 0.1s ease-out;
+}
+.item:before {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  font-size: 1.7rem;
+}
+.item:nth-child(1):before {
+  content: "~";
+}
+.item:nth-child(2)::before {
+  content: "!";
+}
+.item:nth-child(3)::before {
+  content: "@";
+}
+.item:nth-child(4)::before {
+  content: "#";
+}
+.item:nth-child(5)::before {
+  content: "$";
+}
+.item:nth-child(6)::before {
+  content: "%";
+}
+.item:nth-child(7)::before {
+  content: "^";
+}
+.item:nth-child(8)::before {
+  content: "&";
+}
+.item:nth-child(9)::before {
+  content: "*";
+}
+.item:nth-child(10)::before {
+  content: "(";
+}
+.item:nth-child(11)::before {
+  content: ")";
+}
+.item:nth-child(12)::before {
+  content: "_";
+}
+.item:nth-child(13)::before {
+  content: "+";
+}
+.item:nth-child(39):before {
+  content: ":";
+}
+.item:nth-child(40):before {
+  content: "'";
+}
+.item:nth-child(50):before {
+  content: "<";
+}
+.item:nth-child(51):before {
+  content: ">";
+}
+.item:nth-child(52):before {
+  content: "?";
+}
+.item.lowercase {
+  text-transform: lowercase;
+}
+.item:active {
+  scale: 0.96;
+  color: var(--color-text);
+  box-shadow: var(--box-shadow-inner);
+}
+.item.active, .item.capslock--active {
+  scale: 0.96;
+  color: var(--color-text);
+  box-shadow: var(--box-shadow-inner);
+}
+.item.tab {
+  grid-row: 2;
+  grid-column: span 3;
+}
+.item.backspace {
+  grid-column: span 4;
+}
+.item.capslock {
+  grid-row: 3;
+  grid-column: span 5;
+}
+.item.del {
+  grid-column: span 3;
+}
+.item.shiftleft {
+  grid-row: 4;
+  grid-column: span 5;
+}
+.item.shiftright {
+  grid-column: span 3;
+}
+.item.enter {
+  grid-column: span 3;
+}
+.item.ctrl {
+  grid-column: span 3;
+}
+.item.space {
+  grid-column: span 13;
+}
+.item:last-child {
+  grid-column: span 3;
+}
+
+.change-language .item {
+  position: relative;
+}
+.change-language .item::before {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  font-size: 1.7rem;
+}
+.change-language .item:nth-child(1):before {
+  content: "";
+}
+.change-language .item:nth-child(2)::before {
+  content: "!";
+}
+.change-language .item:nth-child(3)::before {
+  content: '"';
+}
+.change-language .item:nth-child(4)::before {
+  content: "№";
+}
+.change-language .item:nth-child(5)::before {
+  content: ";";
+}
+.change-language .item:nth-child(6)::before {
+  content: "%";
+}
+.change-language .item:nth-child(7)::before {
+  content: ":";
+}
+.change-language .item:nth-child(8)::before {
+  content: "?";
+}
+.change-language .item:nth-child(9)::before {
+  content: "*";
+}
+.change-language .item:nth-child(10)::before {
+  content: "(";
+}
+.change-language .item:nth-child(11)::before {
+  content: ")";
+}
+.change-language .item:nth-child(12)::before {
+  content: "_";
+}
+.change-language .item:nth-child(13)::before {
+  content: "+";
+}
+.change-language .item:nth-child(39)::before, .change-language .item:nth-child(40)::before, .change-language .item:nth-child(50)::before, .change-language .item:nth-child(51)::before, .change-language .item:nth-child(52)::before {
+  content: "";
+}
+
+@media (max-width: 48em) {
+  .keyboard__items {
+    grid-auto-rows: auto;
+    grid-template-rows: auto;
+  }
+  .keyboard__textarea {
+    width: 90%;
+  }
+  .item {
+    font-size: 1.2rem;
+    grid-column: span 1;
+    height: 2rem;
+  }
+  .item.tab {
+    grid-column: span 3;
+  }
+  .item.backspace {
+    grid-column: span 3;
+  }
+  .item.capslock {
+    grid-column: span 3;
+  }
+  .item.del {
+    grid-column: span 2;
+  }
+  .item.shiftleft {
+    grid-column: span 3;
+  }
+  .item.shiftright {
+    grid-column: span 3;
+  }
+  .item.enter {
+    grid-column: span 2;
+  }
+  .item.ctrl {
+    grid-column: span 2;
+  }
+  .item.space {
+    grid-column: span 6;
+  }
+  .item:last-child {
+    grid-column: span 1;
+  }
+}
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+ul[role=list],
+ol[role=list] {
+  list-style: none;
+}
+
+/* Set core root defaults */
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  -webkit-text-decoration-skip: ink;
+          text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}/*# sourceMappingURL=main.css.map */
